@@ -4,7 +4,7 @@ var textIcon = "assets/text.png",
     audioIcon = "assets/audio.png",
     movieIcon = "assets/movie.png",
     unknownIcon = "assets/unknown.png";
-    
+
 var _uploadFiles, _previewOnceNum = 4, _previewedNum, _isUploading = false;
 var PageState = {
     SELECT: 0,
@@ -16,11 +16,11 @@ var PageState = {
 var upload = function(){
     var targets = _uploadFiles, done = 0, total = targets.length, beginTime, isAbort = false,
         incr = function(){ ++done; };
-    
+
     var updateStatus = function(){
         updateProgress(done / total * 100);
         $("#progressmsg").text("処理中...（" + done + " / " + total + "）");
-        
+
         if(done == total){
             updatePage(PageState.SELECT);
             _isUploading = false;
@@ -29,14 +29,14 @@ var upload = function(){
             alert("完了しました。（" + uploadSec + "秒）");
         }
     };
-    
+
     var abort = function(){
         isAbort = true;
         updatePage(PageState.SELECT);
         _isUploading = false;
         alert("中止しました。");
     };
-    
+
     var startThread = function(files){
         var i = 0, len = files.length, retry = 0,
             iter = function(){
@@ -44,7 +44,7 @@ var upload = function(){
                     var file = files[i++];
                     var fd = new FormData();
                     fd.append("file", file);
-                    
+
                     $.ajax({
                         url: "receive.php",
                         type: "POST",
@@ -53,7 +53,7 @@ var upload = function(){
                         contentType: false,
                         success: function(){
                             if(isAbort){ return; }
-                            
+
                             incr();
                             updateStatus();
                             retry = 0;
@@ -61,20 +61,20 @@ var upload = function(){
                         },
                         error: function(xhr, textStatus, errorThrown){
                             if(isAbort){ return; }
-                            
+
                             console.log(xhr);
                             console.log(textStatus + ": " + errorThrown);
-                            
+
                             if(xhr.status == 500 && retry < 3){
                                 console.log("retry: " + file.name);
-                                
+
                                 i--;
                                 retry++;
                                 iter();
                             }else{
                                 // 同ファイルで3回リトライしても失敗した場合は終了
                                 alert("「" + file.name + "」はエラーが発生したためアップロードできませんでした。");
-                                
+
                                 if(confirm("残りのファイルのアップロード処理を続けますか？")){
                                     iter();
                                 }else{
@@ -92,18 +92,18 @@ var upload = function(){
             };
         iter();
     };
-    
+
     // スレッドに配布するファイルリストを作成
     var tnum = $("#threadnum").val(), tpool = [];
     for(var i=0; i<tnum; ++i){ tpool.push([]); }
     for(var i=0; i<total; ++i){ tpool[i % tnum].push(targets[i]); }
-    
+
     // 状態を初期化した後に各スレッドを開始
     updateStatus();
     updatePage(PageState.UPLOADING);
     beginTime = (new Date()).getTime();
     _isUploading = true;
-    
+
     for(var i=0; i<tnum; ++i){
         startThread(tpool[i]);
     }
@@ -111,24 +111,24 @@ var upload = function(){
 
 var createIcon = function(file, callback){
     var fileType = getFileType(file);
-    
+
     var iconpnl = document.createElement("div");
     iconpnl.className = "iconpnl";
     $('#preview').append(iconpnl);
-    
+
     var imgpnl = document.createElement("div");
     imgpnl.className = "imgpnl";
     iconpnl.appendChild(imgpnl);
-    
+
     var img = new Image();
     imgpnl.appendChild(img);
-    
+
     var name = document.createElement("div");
     name.className = "name";
     $(name).text(file.name);
     iconpnl.appendChild(name);
-    
-    
+
+
     switch(fileType){
         case "text":
             img.src = textIcon;
@@ -154,19 +154,19 @@ var createIcon = function(file, callback){
             img.src = unknownIcon;
             break;
     }
-    
+
     if(callback){ callback(); }
 };
 
 var readFile = function(file, callback){
     var reader = new FileReader();
-    
+
     reader.onload = function(e){
         if(callback){
             callback(reader.result);
         }
     };
-    
+
     reader.onerror = function() {
         switch (reader.error.code) {
             case FileError.NOT_FOUND_ERR:
@@ -186,13 +186,13 @@ var readFile = function(file, callback){
             //  break;
         }
     };
-    
+
     reader.readAsDataURL(file);
 };
 
 var preview = function(){
     updatePage(PageState.READING);
-    
+
     var files = _uploadFiles;
     var count = 0,
         iter = function(){
@@ -204,7 +204,9 @@ var preview = function(){
                     updatePage(PageState.PREVIEW);
                 }
             }else{
-                $("#previewcontrols").show();
+                if(_previewedNum < files.length){
+                    $("#previewcontrols").show();
+                }
                 updatePage(PageState.PREVIEW);
             }
         };
@@ -213,10 +215,10 @@ var preview = function(){
 
 var handleFiles = function(files){
     if(files.length == 0){ return; }
-    
+
     _uploadFiles = files;
     _previewedNum = 0;
-    
+
     $("#selectmsg").text(_uploadFiles.length + "個のファイルを選択しました。");
     preview();
 };
@@ -231,9 +233,9 @@ var init = function(){
     $("#cancel").click(function(){
         updatePage(PageState.SELECT);
     });
-    
+
     $("#progressbar").progressbar();
-    
+
     updatePage(PageState.SELECT);
 };
 
@@ -244,7 +246,7 @@ var updatePage = function(mode){
             $("#filePreviewPnl").hide();
             $("#previewcontrols").show();
             $("#uploadStatePnl").hide();
-            
+
             $("#selector").get(0).value = "";
             $("#preview").empty();
             break;
@@ -252,7 +254,7 @@ var updatePage = function(mode){
             $("#fileSelectPnl").hide();
             $("#filePreviewPnl").show();
             $("#uploadStatePnl").hide();
-            
+
             $("#previewcontrols").hide();
             $("#upload").attr("disabled", true);
             $("#cancel").attr("disabled", true);
@@ -261,7 +263,7 @@ var updatePage = function(mode){
             $("#fileSelectPnl").hide();
             $("#filePreviewPnl").show();
             $("#uploadStatePnl").hide();
-            
+
             $("#upload").attr("disabled", false);
             $("#cancel").attr("disabled", false);
             break;
@@ -269,7 +271,7 @@ var updatePage = function(mode){
             $("#fileSelectPnl").hide();
             $("#filePreviewPnl").hide();
             $("#uploadStatePnl").show();
-            
+
             updateProgress(0);
             break;
     }
@@ -281,12 +283,12 @@ var updateProgress = function(value){
 
 $(function(){
     init();
-    
+
     var selector = document.getElementById("selector");
     $("#selector").change(function(){
         handleFiles(this.files);
     });
-    
+
     $("#holder")
         .bind("dragover", function(){
             this.className = 'hover';
@@ -302,7 +304,7 @@ $(function(){
             e.preventDefault();
             return false;
         });
-    
+
     $(window).bind('beforeunload', function(e){
         if(_isUploading){
             return "アップロード処理中です。このままページを移動すると処理が中止されますが、良いですか？";
@@ -315,7 +317,7 @@ var getFileType = function(file){
         videoType = /video.*/,
         audioType = /audio/,
         textType = /text.*/;
-    
+
     if(file.type.match(imageType)){
         return "image";
     }
@@ -328,6 +330,6 @@ var getFileType = function(file){
     else if(file.type.match(textType)){
         return "text";
     }
-    
+
     return null;
 };
