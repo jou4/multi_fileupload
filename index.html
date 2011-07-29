@@ -1,0 +1,69 @@
+<!DOCTYPE html>  
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Script-type" content="text/javascript">
+    <meta http-equiv="Content-Style-type" content="text/css">
+    
+    <title>ふぁいるうｐろ～だ</title>
+    
+    <link rel="stylesheet" type="text/css" href="assets/jquery-ui-1.8.6.custom.css" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+	
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/jquery-ui-1.8.6.custom.min.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    
+</head>
+<body>
+    <h1>Multiple File Uploader</h1>
+    
+    <div id="contents">
+        
+        <div id="fileSelectPnl">
+            <h2>アップロードするファイルを選択、もしくはドラッグ＆ドロップしてください。</h2>
+            <div id="holder">
+                <input id="selector" type="file" name="file[]"  multiple />
+            </div>
+        </div>
+        
+        <div id="filePreviewPnl">
+            <h2>アップロードするファイルを確認してください。</h2>
+            <p id="selectmsg"></p>
+            <div id="previewpnl">
+                <div id="preview" class="clearfix"></div>
+                <div id="previewcontrols">
+                    <a href="javascript:void(0);" id="morepreview">もっと見る</a>
+                </div>
+            </div>
+            <p>
+                <label for="threadnum">並列数</label>
+                <select id="threadnum">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </p>
+            <p>
+                <input type="button" id="upload" value="アップロード" />
+                <input type="button" id="cancel" value="キャンセル" />
+            </p>
+        </div>
+        
+        <div id="uploadStatePnl">
+            <h2>アップロードしています。</h2>
+            <div id="progressbar"></div>
+            <p id="progressmsg"></p>
+        </div>
+        
+    </div>
+    
+</body>
+</html>

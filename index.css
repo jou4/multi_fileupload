@@ -1,0 +1,77 @@
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+
+#contents {
+    padding: 1em;
+    border: 1px solid #aca;
+}
+
+#holder {
+    border: 8px dashed #ccc;
+    background-color: #eee;
+    height: 100px;
+    padding: 1em;
+}
+#holder.hover {
+    border: 8px dashed #333;
+}
+
+h2 {
+    margin: 0;
+    margin-bottom: 15px;
+    border-left: 15px solid #aaa;
+    padding-left: 7px;
+    font-size: 110%;
+    color: #E78F08;
+}
+
+#previewpnl{
+    padding:1em;
+    
+    border: 8px dashed #ccc;
+    background-color: #eee;
+}
+
+#preview{
+}
+
+#preview .iconpnl{
+    width: 150px;
+    height: 130px;
+    float:left;
+    
+    margin: 10px 5px;
+}
+#preview .imgpnl{
+    width: 150px;
+    height: 100px;
+    overflow: hidden;
+    text-align: center;
+    
+    border: 1px solid #66CCCC;
+    box-sizing: border-box;
+}
+#preview img{
+    height: 100px;
+}
+#preview .name{
+    margin-top: 3px;
+    text-align: center;
+    
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#previewcontrols{
+    text-align: right;
+    font-size: 90%;
+}
